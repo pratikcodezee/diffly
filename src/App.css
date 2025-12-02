@@ -1,0 +1,406 @@
+/* VS Code-inspired DiffView Styles */
+
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+}
+
+/* Light Theme (default) */
+.App.light {
+  --bg-primary: #f3f3f3;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e8e8;
+  --bg-hover: #e4e6e8;
+  --border-color: #c8c8c8;
+  --border-subtle: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #616161;
+  --text-muted: #6e7681;
+  --accent: #0078d4;
+  --accent-hover: #106ebe;
+  --danger: #d32f2f;
+  --danger-hover: #c62828;
+  --tab-active-bg: #ffffff;
+  --tab-inactive-bg: #ececec;
+  --scrollbar-bg: #e4e4e4;
+  --scrollbar-thumb: #c1c1c1;
+}
+
+/* Dark Theme */
+.App.dark {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d2d;
+  --bg-hover: #3e3e42;
+  --border-color: #3e3e42;
+  --border-subtle: #2d2d2d;
+  --text-primary: #cccccc;
+  --text-secondary: #9d9d9d;
+  --text-muted: #858585;
+  --accent: #0078d4;
+  --accent-hover: #1c97ea;
+  --danger: #f14c4c;
+  --danger-hover: #d73a49;
+  --tab-active-bg: #1e1e1e;
+  --tab-inactive-bg: #2d2d2d;
+  --scrollbar-bg: #1e1e1e;
+  --scrollbar-thumb: #424242;
+}
+
+.App {
+  background-color: var(--bg-primary);
+}
+
+/* Header - VS Code title bar style */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 35px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  -webkit-app-region: drag;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-logo svg {
+  width: 18px;
+  height: 18px;
+}
+
+.app-header h1 {
+  font-size: 13px;
+  font-weight: 400;
+  margin: 0;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Toolbar - VS Code menu bar style */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  gap: 16px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-group label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.select-control {
+  padding: 4px 24px 4px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='8' height='6' viewBox='0 0 8 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L0 0h8L4 6z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  min-width: 100px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.select-control:hover {
+  background-color: var(--bg-hover);
+}
+
+.select-control:focus {
+  border-color: var(--accent);
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toolbar-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.toolbar-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+
+.toolbar-btn.btn-danger {
+  color: var(--danger);
+}
+
+.toolbar-btn.btn-danger:hover {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: #ffffff;
+}
+
+.toolbar-btn.btn-danger:hover svg {
+  stroke: #ffffff;
+}
+
+/* Editor Panel - VS Code editor group style */
+.editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Editor Labels - aligned above editor areas */
+.editor-labels {
+  display: flex;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.editor-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background-color: var(--tab-active-bg);
+}
+
+.editor-label.original {
+  border-right: 1px solid var(--border-color);
+}
+
+.editor-label.modified {
+  border-left: none;
+}
+
+.label-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.label-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Diff Status Bar */
+.diff-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 4px 12px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.diff-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-dot.added {
+  background-color: #28a745;
+}
+
+.legend-dot.removed {
+  background-color: #d73a49;
+}
+
+.editor-wrapper {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+}
+
+/* Footer - VS Code status bar style */
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  height: 22px;
+  background-color: var(--accent);
+  gap: 8px;
+}
+
+.footer-text {
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.footer-text strong {
+  font-weight: 600;
+}
+
+.footer-divider {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .toolbar-btn span {
+    display: none;
+  }
+
+  .diff-legend {
+    display: none;
+  }
+
+  .diff-status-bar {
+    display: none;
+  }
+
+  .control-group label {
+    display: none;
+  }
+
+  .select-control {
+    min-width: 80px;
+  }
+
+  .editor-label {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .label-icon {
+    display: none;
+  }
+}
+
+/* Monaco editor overrides */
+.monaco-editor .margin,
+.monaco-editor .monaco-scrollable-element {
+  border-radius: 0 !important;
+}

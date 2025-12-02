@@ -1,0 +1,116 @@
+{
+  "name": "diffly",
+  "version": "1.0.0",
+  "description": "A beautiful code comparison tool powered by Monaco Editor",
+  "author": "Pratik",
+  "main": "electron/main.js",
+  "private": true,
+  "homepage": "./",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "@monaco-editor/react": "^4.6.0"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.0.1",
+    "cross-env": "^7.0.3",
+    "rimraf": "^5.0.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && node scripts/copy-electron.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"cross-env BROWSER=none PORT=3000 react-scripts start\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "clean": "rimraf dist build/electron",
+    "electron-build": "npm run clean && npm run build && electron-builder",
+    "electron-build-win": "npm run clean && npm run build && electron-builder --win",
+    "win-build": "electron-builder --win",
+    "electron-build-mac": "npm run clean && npm run build && electron-builder --mac",
+    "electron-build-linux": "npm run clean && npm run build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.diffly.app",
+    "productName": "Diffly",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      {
+        "from": "build",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "assets/icons",
+        "to": "assets/icons",
+        "filter": ["**/*"]
+      },
+      "!node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "assets/icons/icon.ico",
+      "sign": null,
+      "verifyUpdateCodeSignature": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icons/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icons/icon.png",
+      "category": "Development"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+
