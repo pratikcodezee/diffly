@@ -221,7 +221,7 @@ Diffly/
 
 ## Author
 
-**Pratik**
+**Pratik Gohil**
 
 ## License
 

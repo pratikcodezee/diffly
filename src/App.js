@@ -20,10 +20,9 @@ const LANGUAGES = [
 ];
 
 function App() {
-  const [originalText, setOriginalText] = useState('');
-  const [modifiedText, setModifiedText] = useState('');
   const [language, setLanguage] = useState('plaintext');
   const [viewMode, setViewMode] = useState('side-by-side');
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [theme, setTheme] = useState(() => {
     // Load theme from localStorage, default to 'light'
     const savedTheme = localStorage.getItem('diffly-theme');
@@ -31,6 +30,9 @@ function App() {
   });
   const diffEditorRef = useRef(null);
   const monacoRef = useRef(null);
+  // Store content in refs to avoid re-renders causing cursor jumps
+  const originalTextRef = useRef('');
+  const modifiedTextRef = useRef('');
 
   // Save theme to localStorage whenever it changes
   useEffect(() => {
@@ -60,14 +62,91 @@ function App() {
     }
   }, [language]);
 
-  // Sync editor content to state
+  // Sync editor content to refs
   const syncEditorContent = () => {
     if (diffEditorRef.current) {
       const originalEditor = diffEditorRef.current.getOriginalEditor();
       const modifiedEditor = diffEditorRef.current.getModifiedEditor();
-      setOriginalText(originalEditor.getValue());
-      setModifiedText(modifiedEditor.getValue());
+      originalTextRef.current = originalEditor.getValue();
+      modifiedTextRef.current = modifiedEditor.getValue();
     }
+  };
+
+  const formatJSON = (text) => {
+    if (!text.trim()) return text;
+    const parsed = JSON.parse(text);
+    return JSON.stringify(parsed, null, 2);
+  };
+
+  const formatHTML = (text) => {
+    if (!text.trim()) return text;
+    let formatted = '';
+    let indent = 0;
+    const lines = text.replace(/>\s*</g, '>\n<').split('\n');
+    
+    lines.forEach(line => {
+      line = line.trim();
+      if (!line) return;
+      
+      if (line.match(/^<\/\w/)) indent--;
+      formatted += '  '.repeat(Math.max(0, indent)) + line + '\n';
+      if (line.match(/^<\w[^>]*[^\/]>/) && !line.match(/^<(br|hr|img|input|meta|link)/i)) indent++;
+    });
+    return formatted.trim();
+  };
+
+  const formatCSS = (text) => {
+    if (!text.trim()) return text;
+    return text
+      .replace(/\s*{\s*/g, ' {\n  ')
+      .replace(/;\s*/g, ';\n  ')
+      .replace(/\s*}\s*/g, '\n}\n')
+      .replace(/\n\s+\n/g, '\n')
+      .replace(/{\n\s+}/g, '{ }')
+      .trim();
+  };
+
+  const formatXML = (text) => {
+    if (!text.trim()) return text;
+    let formatted = '';
+    let indent = 0;
+    const lines = text.replace(/>\s*</g, '>\n<').split('\n');
+    
+    lines.forEach(line => {
+      line = line.trim();
+      if (!line) return;
+      
+      if (line.match(/^<\/\w/)) indent--;
+      formatted += '  '.repeat(Math.max(0, indent)) + line + '\n';
+      if (line.match(/^<\w[^>]*[^\/]>/) && !line.match(/^<\?/)) indent++;
+    });
+    return formatted.trim();
+  };
+
+  const formatYAML = (text) => {
+    if (!text.trim()) return text;
+    return text.split('\n').map(line => {
+      const trimmed = line.trimEnd();
+      return trimmed;
+    }).join('\n').trim();
+  };
+
+  const formatSQL = (text) => {
+    if (!text.trim()) return text;
+    const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER', 'ON', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP', 'VALUES', 'SET', 'INTO'];
+    let formatted = text;
+    
+    keywords.forEach(kw => {
+      const regex = new RegExp(`\\b${kw}\\b`, 'gi');
+      formatted = formatted.replace(regex, kw);
+    });
+    
+    formatted = formatted
+      .replace(/\b(SELECT|FROM|WHERE|JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|GROUP BY|ORDER BY|HAVING|LIMIT|INSERT INTO|UPDATE|DELETE FROM|CREATE|ALTER|DROP|VALUES|SET)\b/gi, '\n$1')
+      .replace(/^\n/, '')
+      .trim();
+    
+    return formatted;
   };
 
   const formatText = () => {
@@ -75,28 +154,60 @@ function App() {
     
     const originalEditor = diffEditorRef.current.getOriginalEditor();
     const modifiedEditor = diffEditorRef.current.getModifiedEditor();
+    const originalValue = originalEditor.getValue();
+    const modifiedValue = modifiedEditor.getValue();
     
-    if (language === 'json') {
-      try {
-        const originalValue = originalEditor.getValue();
-        const modifiedValue = modifiedEditor.getValue();
-        
-        if (originalValue) {
-          const parsed = JSON.parse(originalValue);
-          originalEditor.setValue(JSON.stringify(parsed, null, 2));
-        }
-        if (modifiedValue) {
-          const parsed = JSON.parse(modifiedValue);
-          modifiedEditor.setValue(JSON.stringify(parsed, null, 2));
-        }
-        syncEditorContent();
-      } catch (e) {
-        alert('Invalid JSON format. Cannot format.');
+    try {
+      let formattedOriginal = originalValue;
+      let formattedModified = modifiedValue;
+      
+      switch (language) {
+        case 'json':
+          if (originalValue) formattedOriginal = formatJSON(originalValue);
+          if (modifiedValue) formattedModified = formatJSON(modifiedValue);
+          break;
+        case 'html':
+          if (originalValue) formattedOriginal = formatHTML(originalValue);
+          if (modifiedValue) formattedModified = formatHTML(modifiedValue);
+          break;
+        case 'css':
+          if (originalValue) formattedOriginal = formatCSS(originalValue);
+          if (modifiedValue) formattedModified = formatCSS(modifiedValue);
+          break;
+        case 'xml':
+          if (originalValue) formattedOriginal = formatXML(originalValue);
+          if (modifiedValue) formattedModified = formatXML(modifiedValue);
+          break;
+        case 'yaml':
+          if (originalValue) formattedOriginal = formatYAML(originalValue);
+          if (modifiedValue) formattedModified = formatYAML(modifiedValue);
+          break;
+        case 'sql':
+          if (originalValue) formattedOriginal = formatSQL(originalValue);
+          if (modifiedValue) formattedModified = formatSQL(modifiedValue);
+          break;
+        case 'javascript':
+        case 'typescript':
+        case 'python':
+        case 'java':
+        case 'csharp':
+        case 'cpp':
+          // Use Monaco's built-in formatter for code languages
+          originalEditor.getAction('editor.action.formatDocument')?.run();
+          modifiedEditor.getAction('editor.action.formatDocument')?.run();
+          setTimeout(syncEditorContent, 100);
+          return;
+        default:
+          // For plaintext and markdown, just trim whitespace
+          if (originalValue) formattedOriginal = originalValue.trim();
+          if (modifiedValue) formattedModified = modifiedValue.trim();
       }
-    } else {
-      originalEditor.getAction('editor.action.formatDocument')?.run();
-      modifiedEditor.getAction('editor.action.formatDocument')?.run();
-      setTimeout(syncEditorContent, 100);
+      
+      originalEditor.setValue(formattedOriginal);
+      modifiedEditor.setValue(formattedModified);
+      syncEditorContent();
+    } catch (e) {
+      alert(`Cannot format: ${e.message}`);
     }
   };
 
@@ -107,8 +218,8 @@ function App() {
       originalEditor.setValue('');
       modifiedEditor.setValue('');
     }
-    setOriginalText('');
-    setModifiedText('');
+    originalTextRef.current = '';
+    modifiedTextRef.current = '';
   };
 
   const handleDiffEditorDidMount = (editor, monaco) => {
@@ -121,12 +232,12 @@ function App() {
     originalEditor.updateOptions({ readOnly: false });
     modifiedEditor.updateOptions({ readOnly: false });
 
-    // Listen for content changes
+    // Listen for content changes - store in refs (no re-render)
     originalEditor.onDidChangeModelContent(() => {
-      setOriginalText(originalEditor.getValue());
+      originalTextRef.current = originalEditor.getValue();
     });
     modifiedEditor.onDidChangeModelContent(() => {
-      setModifiedText(modifiedEditor.getValue());
+      modifiedTextRef.current = modifiedEditor.getValue();
     });
   };
 
@@ -146,7 +257,7 @@ function App() {
     scrollBeyondLastLine: false,
     fontSize: 13,
     fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, 'Courier New', monospace",
-    wordWrap: 'on',
+    wordWrap: 'off',
     automaticLayout: true,
     readOnly: false,
     renderSideBySide: viewMode === 'side-by-side',
@@ -157,12 +268,17 @@ function App() {
     lineNumbers: 'on',
     glyphMargin: true,
     folding: true,
+    foldingStrategy: 'indentation',
+    showFoldingControls: 'always',
     lineDecorationsWidth: 10,
     lineNumbersMinChars: 3,
     renderLineHighlight: 'all',
     scrollbar: {
+      vertical: 'visible',
+      horizontal: 'visible',
       verticalScrollbarSize: 10,
       horizontalScrollbarSize: 10,
+      alwaysConsumeMouseWheel: false,
     },
   };
 
@@ -179,6 +295,13 @@ function App() {
           <h1>Diffly</h1>
         </div>
         <div className="header-right">
+          <button onClick={() => setShowHelpModal(true)} className="help-toggle" title="Help & Info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
           <button onClick={toggleTheme} className="theme-toggle" title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
             {theme === 'dark' ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -282,10 +405,10 @@ function App() {
         <div className="editor-wrapper">
           <DiffEditor
             key={viewMode}
-            height="calc(100vh - 130px)"
+            height="100%"
             language={language}
-            original={originalText}
-            modified={modifiedText}
+            original={originalTextRef.current}
+            modified={modifiedTextRef.current}
             onMount={handleDiffEditorDidMount}
             theme={editorTheme}
             options={diffEditorOptions}
@@ -293,11 +416,49 @@ function App() {
         </div>
       </div>
 
-      <footer className="app-footer">
-        <span className="footer-text">Built by <strong>Pratik</strong></span>
-        <span className="footer-divider">•</span>
-        <span className="footer-text">Diffly v1.0</span>
-      </footer>
+      {showHelpModal && (
+        <div className="modal-overlay" onClick={() => setShowHelpModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>About Diffly</h2>
+              <button className="modal-close" onClick={() => setShowHelpModal(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="help-section">
+                <h3>Diffly v1.0</h3>
+                <p>A modern diff viewer for comparing text and code.</p>
+              </div>
+              <div className="help-section">
+                <h3>How to Use</h3>
+                <ul>
+                  <li><strong>Original Panel:</strong> Paste or type your original text</li>
+                  <li><strong>Modified Panel:</strong> Paste or type your modified text</li>
+                  <li><strong>Language:</strong> Select the appropriate language for syntax highlighting</li>
+                  <li><strong>View:</strong> Toggle between side-by-side and inline diff views</li>
+                  <li><strong>Format:</strong> Auto-format code based on selected language</li>
+                  <li><strong>Clear:</strong> Reset both panels</li>
+                </ul>
+              </div>
+              <div className="help-section">
+                <h3>Keyboard Shortcuts</h3>
+                <ul>
+                  <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> - Format document</li>
+                  <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> - Undo</li>
+                  <li><kbd>Ctrl</kbd> + <kbd>Y</kbd> - Redo</li>
+                </ul>
+              </div>
+              <div className="help-section help-footer">
+                <p>Created by <strong>Pratik Gohil</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

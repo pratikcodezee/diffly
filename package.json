@@ -2,7 +2,7 @@
   "name": "diffly",
   "version": "1.0.0",
   "description": "A beautiful code comparison tool powered by Monaco Editor",
-  "author": "Pratik",
+  "author": "Pratik Gohil",
   "main": "electron/main.js",
   "private": true,
   "homepage": "./",

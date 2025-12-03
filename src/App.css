@@ -307,34 +307,192 @@
 
 .editor-wrapper {
   flex: 1;
-  overflow: hidden;
+  overflow: visible;
   min-height: 0;
   position: relative;
 }
 
-/* Footer - VS Code status bar style */
-.app-footer {
+.editor-wrapper > section {
+  height: 100% !important;
+}
+
+/* Help button */
+.help-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
-  height: 22px;
-  background-color: var(--accent);
-  gap: 8px;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+  margin-right: 4px;
 }
 
-.footer-text {
-  font-size: 11px;
-  color: #ffffff;
+.help-toggle:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
 }
 
-.footer-text strong {
+.help-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
-.footer-divider {
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.help-section {
+  margin-bottom: 20px;
+}
+
+.help-section:last-child {
+  margin-bottom: 0;
+}
+
+.help-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.help-section p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.help-section ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.help-section li {
+  margin-bottom: 4px;
+}
+
+.help-section li strong {
+  color: var(--text-primary);
+}
+
+.help-section kbd {
+  display: inline-block;
+  padding: 2px 6px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.help-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  text-align: center;
+}
+
+.help-footer p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.help-footer strong {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 /* Scrollbar styling */
