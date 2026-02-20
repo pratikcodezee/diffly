@@ -55,6 +55,23 @@ npm run build
 
 This creates an optimized production build in the `build` folder.
 
+### Google Analytics (Optional)
+
+To enable Google Analytics 4:
+
+1. **Create a GA4 property** at [analytics.google.com](https://analytics.google.com) and get your Measurement ID (format: `G-XXXXXXXXXX`).
+
+2. **Local development** – Create a `.env` file in the project root:
+
+   ```
+   REACT_APP_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+   ```
+
+3. **GitHub Pages** – Add the ID as a repository secret:
+   - Repo → **Settings** → **Secrets and variables** → **Actions**
+   - New repository secret: `REACT_APP_GA_MEASUREMENT_ID` = your Measurement ID
+   - The next deployment will include Analytics.
+
 ## Electron Desktop App
 
 ### Development Mode
