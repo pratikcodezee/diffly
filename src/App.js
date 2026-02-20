@@ -90,7 +90,7 @@ function App() {
       
       if (line.match(/^<\/\w/)) indent--;
       formatted += '  '.repeat(Math.max(0, indent)) + line + '\n';
-      if (line.match(/^<\w[^>]*[^\/]>/) && !line.match(/^<(br|hr|img|input|meta|link)/i)) indent++;
+      if (line.match(/^<\w[^>]*[^/]>/) && !line.match(/^<(br|hr|img|input|meta|link)/i)) indent++;
     });
     return formatted.trim();
   };
@@ -118,7 +118,7 @@ function App() {
       
       if (line.match(/^<\/\w/)) indent--;
       formatted += '  '.repeat(Math.max(0, indent)) + line + '\n';
-      if (line.match(/^<\w[^>]*[^\/]>/) && !line.match(/^<\?/)) indent++;
+      if (line.match(/^<\w[^>]*[^/]>/) && !line.match(/^<\?/)) indent++;
     });
     return formatted.trim();
   };
