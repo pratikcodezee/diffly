@@ -2,6 +2,8 @@
 
 A beautiful code comparison tool with syntax highlighting, formatting, and visual diff capabilities. Built with React.js and Monaco Editor.
 
+**Live Site:** [https://pratikcodezee.github.io/diffly](https://pratikcodezee.github.io/diffly)
+
 ## Features
 
 - ✨ **Live Diff Comparison**: Real-time text comparison with live updates as you type

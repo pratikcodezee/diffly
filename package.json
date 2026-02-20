@@ -5,7 +5,7 @@
   "author": "Pratik Gohil",
   "main": "electron/main.js",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://pratikcodezee.github.io/diffly",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
